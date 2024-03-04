@@ -35,10 +35,10 @@ public class DatabaseLoader implements CommandLineRunner { // <2>
 
 	@Override
 	public void run(String... strings) throws Exception { // <4>
-		this.repository.save(new Employee("Frodo", "Baggins", "ring bearer", 4));
-		this.repository.save(new Employee("Bilbo", "Baggins", "burglar", 7));
-		this.repository.save(new Employee("Gandalf", "the Grey", "wizard", 10));
-		this.repository.save(new Employee("Gollum", "Smeagol", "ring bearer", 2));
+		this.repository.save(new Employee("Frodo", "Baggins", "ring bearer", 4, "frodo@baggins.com"));
+		this.repository.save(new Employee("Bilbo", "Baggins", "burglar", 7, "baggins@bilbo.com"));
+		this.repository.save(new Employee("Gandalf", "the Grey", "wizard", 10, "grey@gandalf.com"));
+		this.repository.save(new Employee("Sméagol", "Gollum", "thief", 2, "gollum@sméagol.com"));
 
 	}
 }
