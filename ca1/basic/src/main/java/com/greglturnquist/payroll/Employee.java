@@ -16,6 +16,10 @@
 package com.greglturnquist.payroll;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,14 +56,14 @@ public class Employee {
     }
 
     public Employee(String firstName, String lastName, String description, int jobYears, String email) {
-        if (firstName == null || firstName.isEmpty() || lastName == null || lastName.isEmpty()|| description == null || description.isEmpty() || jobYears < 0 ||  email == null)
+        if (firstName == null || firstName.isEmpty() || lastName == null || lastName.isEmpty()|| description == null || description.isEmpty() || jobYears < 0)
             throw new IllegalArgumentException("First name, last name, and description must not be null. Job years must be greater than 0.");
 
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.description = description;
-        this.jobYears = jobYears;
-        this.email = email;
+       setFirstName( firstName);
+        setLastName(lastName);
+        setDescription(description);
+        setJobYears(jobYears);
+        setEmail(email);
     }
 
     @Override
@@ -86,7 +90,16 @@ public class Employee {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if (email == null || email.isEmpty())
+            throw new IllegalArgumentException("Email must not be null or empty.");
+
+        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid email format");
+        }
     }
 
     public int getJobYears() {
@@ -94,6 +107,8 @@ public class Employee {
     }
 
     public void setJobYears(int jobYears) {
+        if (jobYears < 0)
+            throw new IllegalArgumentException("Job years must be greater than 0.");
         this.jobYears = jobYears;
     }
 
@@ -102,10 +117,13 @@ public class Employee {
     }
 
     public void setId(Long id) {
+
         this.id = id;
     }
 
     public String getFirstName() {
+        if (firstName == null || firstName.isEmpty())
+            throw new IllegalArgumentException("First name, last name, and description must not be null. Job years must be greater than 0.");
         return firstName;
     }
 
@@ -118,6 +136,8 @@ public class Employee {
     }
 
     public void setLastName(String lastName) {
+        if (lastName == null || lastName.isEmpty())
+            throw new IllegalArgumentException("First name, last name, and description must not be null. Job years must be greater than 0.");
         this.lastName = lastName;
     }
 
@@ -126,6 +146,8 @@ public class Employee {
     }
 
     public void setDescription(String description) {
+        if (description == null || description.isEmpty())
+            throw new IllegalArgumentException("First name, last name, and description must not be null. Job years must be greater than 0.");
         this.description = description;
     }
 
