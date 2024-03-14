@@ -633,6 +633,9 @@ public class EmployeeTest {
    git push origin master
    git push origin v1.3.0
    ```    
+
+I should have used the command "git merge --no-ff". This way, GIt would create a new commit object, even if a fast forward merge is possible. This will preserve the information that a feature branch once existed.
+
 5. Create a new branch named after the bug being fixed to address the issue.
    ```bash
     git branch fix-invalid-email
@@ -785,7 +788,7 @@ git tag v1.3.1
 git push origin master
 git push origin v1.3.1
 ```
-
+I should have used the command "git merge --no-ff". This way, GIt would create a new commit object, even if a fast forward merge is possible. This will preserve the information that a feature branch once existed. 
 9. Mark the repository with the tag "ca1-part2".
 
 ```bash
