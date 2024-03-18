@@ -70,3 +70,12 @@ task runServer (type:JavaExec, dependsOn: classes){
 
     args '59001'
 }
+
+task backupSources(type: Copy) {
+    // Define the source directory
+    from 'src'
+
+    // Define the destination directory (create 'backup' folder if it doesn't exist)
+    into 'src/backup'
+}
+
