@@ -79,3 +79,15 @@ task backupSources(type: Copy) {
     into 'src/backup'
 }
 
+task zipSources(type: Zip) {
+    // Define the source directory
+    from 'src'
+
+    // Specify the archive file name
+    archiveFileName = 'application-sources.zip'
+
+    // Optionally, define the destination directory (defaults to build/outputs/zips)
+    destinationDirectory = file('src/zipFile')
+}
+
+
