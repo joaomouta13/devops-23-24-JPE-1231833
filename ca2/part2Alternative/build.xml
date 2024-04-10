@@ -1,0 +1,28 @@
+<project name="TutorialApplication" default="build">
+
+    <!-- Define properties -->
+    <property name="src.dir" value="src/main/java" />
+    <property name="build.dir" value="build" />
+    <property name="dist.dir" value="dist" />
+    <property name="lib.dir" value="lib" />
+
+    <!-- Compile source code -->
+    <target name="compile">
+        <mkdir dir="${build.dir}/classes" />
+        <javac srcdir="${src.dir}" destdir="${build.dir}/classes">
+            <classpath>
+                <!-- Include all JAR files in the lib directory -->
+                <fileset dir="${lib.dir}">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Package the application -->
+    <target name="build" depends="compile">
+        <mkdir dir="${dist.dir}" />
+        <jar destfile="${dist.dir}/myapp.jar" basedir="${build.dir}/classes" />
+    </target>
+
+</project>
