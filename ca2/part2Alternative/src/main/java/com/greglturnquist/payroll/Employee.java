@@ -25,7 +25,8 @@ import jakarta.persistence.Id;
  * @author Greg Turnquist
  */
 // tag::code[]
-@Entity // <1>
+@Entity
+public// <1>
 class Employee {
 
     private @Id @GeneratedValue Long id; // <2>

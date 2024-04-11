@@ -1,13 +1,18 @@
-package com.greglturnquist.payroll;
+import com.greglturnquist.payroll.Employee;
+import org.junit.Test;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import static org.junit.jupiter.api.Assertions.*;
 
-class EmployeeTest {
+import static org.junit.Assert.assertEquals;
+
+
+public class EmployeeTest {
 
     @Test
-    void testEmployeeConstructorWithValidArguments() {
+    public void testEmployeeConstructorWithValidArguments() {
         // Arrange
         String firstName = "John";
         String lastName = "Doe";
@@ -29,7 +34,7 @@ class EmployeeTest {
     }
 
     @Test
-    void testEmployeeConstructorWithInvalidArguments() {
+    public void testEmployeeConstructorWithInvalidArguments() {
         // Arrange
         String invalidFirstName = null; // invalid because it's null
 
@@ -40,7 +45,7 @@ class EmployeeTest {
     }
 
     @Test
-    void testValidateArgumentsWithInvalidEmail() {
+    public void testValidateArgumentsWithInvalidEmail() {
         // Arrange
         Employee employee = new Employee("Jane", "Doe", "Manager", "Project Manager", 10, "jane.doe@example.com");
 
@@ -52,18 +57,18 @@ class EmployeeTest {
     }
 
     @Test
-    void testEqualsAndHashCode() {
+    public void testEqualsAndHashCode() {
         // Arrange
         Employee employee1 = new Employee("John", "Doe", "Developer", "Senior Developer", 5, "john.doe@example.com");
         Employee employee2 = new Employee("John", "Doe", "Developer", "Senior Developer", 5, "john.doe@example.com");
 
         // Act & Assert
-        assertEquals(employee1, employee2, "Employee objects with the same field values should be equal");
-        assertEquals(employee1.hashCode(), employee2.hashCode(), "Employee objects with the same field values should have the same hash code");
+        assertEquals("Employee objects with the same field values should be equal", employee1, employee2);
+        assertEquals("Employee objects with the same field values should have the same hash code", new Integer[]{employee1.hashCode()}, employee2.hashCode());
     }
 
     @Test
-    void testSetAndGetMethods() {
+    public void testSetAndGetMethods() {
         // Arrange
         Employee employee = new Employee("John", "Doe", "Developer", "Senior Developer", 5, "john.doe@example.com");
         String updatedFirstName = "Jane";
@@ -91,7 +96,7 @@ class EmployeeTest {
     }
 
     @Test
-    void testEmployeeId() {
+    public void testEmployeeId() {
         // Arrange
         Employee employee = new Employee("John", "Doe", "Developer", "Senior Developer", 5, "john.doe@example.com");
         Long id = 1L;
@@ -104,7 +109,7 @@ class EmployeeTest {
     }
 
     @Test
-    void testToString() {
+    public void testToString() {
         // Arrange
         Employee employee = new Employee("John", "Doe", "Developer", "Senior Developer", 5, "john.doe@example.com");
 
@@ -117,7 +122,7 @@ class EmployeeTest {
     }
 
     @Test
-    void testValidationWithAllValidArguments() {
+    public void testValidationWithAllValidArguments() {
         // Arrange
         String firstName = "John";
         String lastName = "Doe";
@@ -135,7 +140,7 @@ class EmployeeTest {
     }
 
     @Test
-    void testValidateArgumentsWithEmptyEmail() {
+    public void testValidateArgumentsWithEmptyEmail() {
         // Arrange
         Employee employee = new Employee("Jane", "Doe", "Manager", "Project Manager", 10, "jane.doe@example.com");
 
@@ -147,7 +152,7 @@ class EmployeeTest {
     }
 
     @Test
-    void testValidateArgumentsWithEmailWithoutAtSymbol() {
+    public void testValidateArgumentsWithEmailWithoutAtSymbol() {
         // Arrange
         Employee employee = new Employee("Jane", "Doe", "Manager", "Project Manager", 10, "jane.doe@example.com");
 
@@ -159,7 +164,7 @@ class EmployeeTest {
     }
 
     @Test
-    void testValidateArgumentsWithEmailWithoutDomain() {
+    public void testValidateArgumentsWithEmailWithoutDomain() {
         // Arrange
         Employee employee = new Employee("Jane", "Doe", "Manager", "Project Manager", 10, "jane.doe@example.com");
 

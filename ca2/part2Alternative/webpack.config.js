@@ -1,26 +1,37 @@
-var path = require('path');
+const path = require('path');
 
 module.exports = {
-    entry: './src/main/js/app.js',
-    devtool: 'sourcemaps',
+    entry: './src/main/js/app.js', // Assuming your main frontend entry point is index.js
+    devtool: 'source-map',
     cache: true,
-    mode: 'development',
+    mode: 'development', // Or 'production' for optimized builds
     output: {
-        path: __dirname,
-        filename: './src/main/resources/static/built/bundle.js'
+        path: path.resolve(__dirname, 'src/main/resources/static/built'),
+        filename: 'bundle.js',
+    },
+    devServer: {
+        hot: true, // Enable hot module replacement
+        open: true, // Automatically open the browser
+        historyApiFallback: true,
+
     },
     module: {
         rules: [
             {
-                test: path.join(__dirname, '.'),
+                test: /\.(js|jsx)$/,
                 exclude: /(node_modules)/,
                 use: [{
                     loader: 'babel-loader',
                     options: {
-                        presets: ["@babel/preset-env", "@babel/preset-react"]
+                        presets: ['@babel/preset-env', '@babel/preset-react']
                     }
                 }]
+            },
+            {
+                test: /\.css$/, // Add a rule for CSS (optional)
+                use: ['style-loader', 'css-loader']
             }
         ]
     }
+
 };

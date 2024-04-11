@@ -26,21 +26,22 @@
   },
   "packageManager": "npm@9.6.7",
   "scripts": {
-
+    "build": "webpack --mode=production",
+    "dev": "webpack-dev-server",
     "webpack": "webpack",
-    "build": "npm run webpack",
     "check": "echo Checking frontend",
     "clean": "echo Cleaning frontend",
     "lint": "echo Linting frontend",
-    "test": "echo Testing frontend"
-
+    "test": "echo Testing frontend",
+    "start": "webpack serve --mode development --open"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",
-    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-env": "^7.24.4",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.2",
-    "webpack": "^4.19.1",
-    "webpack-cli": "^3.1.0"
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.0.4"
   }
 }
