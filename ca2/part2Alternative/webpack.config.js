@@ -1,12 +1,12 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/main/js/app.js', // Assuming your main frontend entry point is index.js
+    entry: './src/main/js/app.js',
     devtool: 'source-map',
     cache: true,
     mode: 'development', // Or 'production' for optimized builds
     output: {
-        path: path.resolve(__dirname, 'src/main/resources/static/built'),
+        path: path.resolve(__dirname, './src/main/resources/static/built'),
         filename: 'bundle.js',
     },
     devServer: {

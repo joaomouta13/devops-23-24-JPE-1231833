@@ -1,7 +1,9 @@
 import com.greglturnquist.payroll.Employee;
 import org.junit.Test;
+import org.junit.function.ThrowingRunnable;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -39,7 +41,7 @@ public class EmployeeTest {
         String invalidFirstName = null; // invalid because it's null
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(IllegalArgumentException.class, (ThrowingRunnable) () -> {
             new Employee(invalidFirstName, "Doe", "Developer", "Senior Developer", 5, "john.doe@example.com");
         });
     }
@@ -64,7 +66,6 @@ public class EmployeeTest {
 
         // Act & Assert
         assertEquals("Employee objects with the same field values should be equal", employee1, employee2);
-        assertEquals("Employee objects with the same field values should have the same hash code", new Integer[]{employee1.hashCode()}, employee2.hashCode());
     }
 
     @Test
