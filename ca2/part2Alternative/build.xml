@@ -44,6 +44,18 @@
         <copy file="${dist.dir}/myapp.jar" todir="${basedir}/${dist.dir}" />
     </target>
 
+    <!-- Delete webpack generated files -->
+    <target name="clean-webpack" description="Delete webpack generated files">
+        <delete>
+            <fileset dir="src/main/resources/static/built"/>
+        </delete>
+    </target>
+
+    <target name="clean" depends="clean-webpack">
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+    </target>
+
     <target name="start-webpack-server" description="Start webpack development server">
         <exec executable="cmd" dir="${basedir}" failonerror="true">
             <arg value="/c" />
@@ -59,11 +71,7 @@
         <echo message="Application started."/>
     </target>
 
-    <!-- Clean -->
-    <target name="clean">
-        <delete dir="${build.dir}" />
-        <delete dir="${dist.dir}" />
-    </target>
+
 
     <!-- Default target -->
     <target name="default" depends="clean, build" />
