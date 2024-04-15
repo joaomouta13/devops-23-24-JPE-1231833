@@ -6,11 +6,11 @@
     <property name="dist.dir" value="dist" />
     <property name="lib.dir" value="lib" />
     <property name="webapp.dir" value="src/main/webapp" />
-
     <property name="slf4j.version" value="2.0.12" />
     <property name="slf4j.api.jar" value="${lib.dir}/slf4j-api-${slf4j.version}.jar" />
     <property name="logback.version" value="1.2.6" />
     <property name="logback.classic.jar" value="${lib.dir}/logback-classic-${logback.version}.jar" />
+
 
     <!-- Compile source code -->
     <target name="compile">
@@ -39,6 +39,11 @@
         <jar destfile="${dist.dir}/myapp.jar" basedir="${build.dir}/classes" />
     </target>
 
+    <!-- Copy the generated JAR to dist folder -->
+    <target name="copy-to-dist" depends="build">
+        <copy file="${dist.dir}/myapp.jar" todir="${basedir}/${dist.dir}" />
+    </target>
+
     <target name="start-webpack-server" description="Start webpack development server">
         <exec executable="cmd" dir="${basedir}" failonerror="true">
             <arg value="/c" />
@@ -53,6 +58,15 @@
         <java jar="${dist.dir}/myapp.jar" fork="true" spawn="true"/>
         <echo message="Application started."/>
     </target>
+
+    <!-- Clean -->
+    <target name="clean">
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+    </target>
+
+    <!-- Default target -->
+    <target name="default" depends="clean, build" />
+</project>
     
 
-</project>

@@ -4,7 +4,7 @@ module.exports = {
     entry: './src/main/js/app.js',
     devtool: 'source-map',
     cache: true,
-    mode: 'development', // Or 'production' for optimized builds
+    mode: 'production', // Or 'production' for optimized builds
     output: {
         path: path.resolve(__dirname, './src/main/resources/static/built'),
         filename: 'bundle.js',
