@@ -36,7 +36,17 @@
     <!-- Package the application -->
     <target name="build" depends="compile">
         <mkdir dir="${dist.dir}" />
-        <jar destfile="${dist.dir}/myapp.jar" basedir="${build.dir}/classes" />
+        <jar destfile="${dist.dir}/myapp.jar" basedir="${build.dir}/classes" >
+            <mappedresources>
+                <fileset dir="${lib.dir}" />
+                <globmapper from="*" to="BOOT-INF/lib/*"/>
+            </mappedresources>
+            <fileset file="${lib.dir}/spring-boot-loader-tools-2.7.18.jar" />
+            <manifest>
+                <attribute name="Main-Class" value="org.springframework.boot.loader.JarLauncher" />
+                <attribute name="Start-Class" value="com.greglturnquist.payroll/ReactAndSpringDataRestApplication.java" />
+            </manifest>
+        </jar>
     </target>
 
     <!-- Copy the generated JAR to dist folder -->
@@ -71,10 +81,7 @@
         <echo message="Application started."/>
     </target>
 
-
-
     <!-- Default target -->
     <target name="default" depends="clean, build" />
-</project>
-    
 
+</project>

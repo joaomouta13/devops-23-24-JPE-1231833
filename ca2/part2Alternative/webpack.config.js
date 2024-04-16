@@ -18,20 +18,17 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/,
-                exclude: /(node_modules)/,
-                use: [{
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react']
+                        presets: ['@babel/preset-env']
                     }
-                }]
-            },
-            {
-                test: /\.css$/, // Add a rule for CSS (optional)
-                use: ['style-loader', 'css-loader']
+                }
             }
         ]
     }
+
 
 };
