@@ -1,0 +1,14 @@
+# Start from a base image with Java and Gradle installed
+FROM gradle:jdk21
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the jar file into the docker image
+COPY build/libs/basic_demo-0.1.0.jar .
+
+# Expose the port
+EXPOSE 59001
+
+# Run the Gradle task
+CMD ["java", "-cp", "basic_demo-0.1.0.jar", "basic_demo.ChatServerApp", "59001"]
