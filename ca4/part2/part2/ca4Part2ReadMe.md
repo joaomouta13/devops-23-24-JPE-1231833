@@ -148,6 +148,61 @@ docker push moutaj/part2-db
 
 ![Docker Hub](images/dockerHub.png)
 
+8. Use a volume with db container to get a copy of the database file by using the exec to run a shell in the container and copying the database file to the volume.
+   To achieve this, update the database Dockerfile to use the volume correctly:
+
+* Change the application properties file:
+```properties
+spring.datasource.url=jdbc:h2:tcp://db:9092/./jpadb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+```
+
+* Update the database Dockerfile to use the volume correctly:
+
+```dockerfile
+FROM ubuntu:focal
+
+RUN apt-get update && \
+    apt-get install -y wget openjdk-21-jdk-headless && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/h2
+
+RUN wget https://repo1.maven.org/maven2/com/h2database/h2/1.4.200/h2-1.4.200.jar -O h2.jar
+
+# Ensure the data directory exists
+RUN mkdir -p /opt/h2-data
+
+# Expose the data directory as a volume
+VOLUME /opt/h2-data
+
+EXPOSE 8082
+EXPOSE 9092
+
+CMD ["java", "-cp", "h2.jar", "org.h2.tools.Server", "-ifNotExists", "-web", "-webAllowOthers", "-webPort", "8082", "-tcp", "-tcpAllowOthers", "-tcpPort", "9092", "-baseDir", "/opt/h2-data"]
+```
+
+* The ```VOLUME /opt/h2-data``` instruction indicates that this directory should be a volume.
+* The ```CMD``` instruction includes ```-baseDir /opt/h2-data``` to ensure the H2 database uses this directory for storage.
+
+Start the services:
+```bash
+docker-compose up -d
+```
+Run a shell inside the database container:
+```bash
+docker exec -it h2-db bash
+```
+Due to the settings used in the Dockerfile, the database file will be stored in the /opt/h2-data directory. To verify this, run the following command:
+```bash
+cd /opt/h2-data
+ls
+```
+The output should show the database file:
+
+![Database File](images/databaseFile.png)
+
+9. Tag the repository with the tag ca4-part2.
+
 8. Tag the repository with the tag ca4-part2.
 ```bash
 git tag ca4-part2
