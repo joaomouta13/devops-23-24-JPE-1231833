@@ -2,31 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS_ID = 'moutaj'
-        DOCKER_IMAGE = 'jenkins-image'
-        PROJECT_DIR = 'ca2/part2'
-    }
-
-    tools {
-        nodejs "NodeJs"
-    }
-
-    agent {
-        docker {
-            image 'docker:19.03.13'
-            args '--privileged'
-            reuseNode true
-        }
+        // Define Docker Hub credentials ID as configured in Jenkins credentials
+        DOCKERHUB_CREDENTIALS = 'moutaj'
+        // Define the Docker image name
+        IMAGE_NAME = "image-with-jenkins"
     }
 
     stages {
-        stage('Install Docker') {
-            steps {
-                sh 'apk add --no-cache docker'
-                sh 'docker --version'
-            }
-        }
-
         stage('Checkout') {
             steps {
                 echo 'Checking out the code from the repository'
@@ -37,9 +19,15 @@ pipeline {
         stage('Assemble') {
             steps {
                 echo 'Assembling...'
-                dir("${env.PROJECT_DIR}") {
+                dir('ca2/part2') {
                     sh 'chmod +x ./gradlew'
                     sh './gradlew clean assemble -x test'
+                }
+            }
+            post {
+                success {
+                    // Archive the build artifacts
+                    archiveArtifacts artifacts: '**/build/libs/*.jar', allowEmptyArchive: true
                 }
             }
         }
@@ -47,25 +35,27 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing...'
-                dir("${env.PROJECT_DIR}") {
+                dir('ca2/part2') {
                     sh './gradlew test'
-                    junit 'build/test-results/test/*.xml'
+                    junit '**/build/test-results/test/*.xml'
                 }
             }
         }
 
         stage('Javadoc') {
             steps {
-                echo 'Generating Javadocs...'
-                dir("${env.PROJECT_DIR}") {
+                echo 'Generating Javadoc...'
+                dir('ca2/part2') {
                     sh './gradlew javadoc'
-                    publishHTML(target: [
-                        reportName: 'Javadoc',
+                    archiveArtifacts artifacts: '**/build/docs/javadoc/**', allowEmptyArchive: true
+                    publishHTML target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true,
                         reportDir: 'build/docs/javadoc',
                         reportFiles: 'index.html',
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true
-                    ])
+                        reportName: 'Javadoc Report'
+                    ]
                 }
             }
         }
@@ -73,20 +63,19 @@ pipeline {
         stage('Archive') {
             steps {
                 echo 'Archiving...'
-                dir("${env.PROJECT_DIR}") {
-                    archiveArtifacts 'build/libs/*.jar'
+                dir('ca2/part2') {
+                    archiveArtifacts artifacts: '**/build/libs/*.jar', allowEmptyArchive: true
                 }
             }
         }
 
         stage('Publish Image') {
             steps {
-                echo 'Building Docker image...'
                 script {
-                    def image = docker.build("${DOCKER_IMAGE}", "${env.PROJECT_DIR}")
                     echo 'Publishing Docker image...'
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
-                        image.push()
+                    docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
+                        def dockerImage = docker.build(IMAGE_NAME + ":${env.BUILD_NUMBER}", './docker')
+                        dockerImage.push()
                     }
                 }
             }
