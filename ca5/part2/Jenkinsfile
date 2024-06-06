@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+     tools {
+            // Use the Docker installation named 'docker'
+            docker 'docker'
+        }
+
     environment {
         // Define Docker Hub credentials ID as configured in Jenkins credentials
         DOCKERHUB_CREDENTIALS = 'moutaj'
