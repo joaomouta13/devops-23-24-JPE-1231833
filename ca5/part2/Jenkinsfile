@@ -1,10 +1,10 @@
 pipeline {
     agent any
 
-     tools {
-            // Use the Docker installation named 'docker'
-            dockerTool 'docker'
-        }
+    tools {
+        // Use the Docker installation named 'docker'
+        dockerTool 'docker'
+    }
 
     environment {
         // Define Docker Hub credentials ID as configured in Jenkins credentials
@@ -79,9 +79,9 @@ pipeline {
                 script {
                     echo 'Publishing Docker image...'
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
-                                            // Building Docker image and pushing it to Docker Hub
-                                            def dockerImage = docker.build(IMAGE_NAME + ":${env.BUILD_NUMBER}", './docker')
-                                            dockerImage.push()
+                        // Building Docker image and pushing it to Docker Hub
+                        def dockerImage = docker.build(IMAGE_NAME + ":${env.BUILD_NUMBER}", './ca2/part2')
+                        dockerImage.push()
                     }
                 }
             }
