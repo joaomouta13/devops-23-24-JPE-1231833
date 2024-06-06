@@ -11,6 +11,21 @@ pipeline {
             nodejs "NodeJs"
         }
 
+         agent {
+                docker {
+                    image 'docker:19.03.13'
+                    args '--privileged'
+                    reuseNode true
+                }
+            }
+            stages {
+                stage('Install Docker') {
+                    steps {
+                        sh 'apk add --no-cache docker'
+                        sh 'docker --version'
+                    }
+                }
+
     stages {
         stage('Checkout') {
             steps {
