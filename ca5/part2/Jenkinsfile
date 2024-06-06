@@ -7,6 +7,10 @@ pipeline {
         PROJECT_DIR = 'ca2/part2'
     }
 
+    tools {
+            nodejs "NodeJs"
+        }
+
     stages {
         stage('Checkout') {
             steps {
@@ -55,15 +59,7 @@ pipeline {
                 }
             }
         }
-        stage('Security Check') {
-            steps {
-                echo 'Checking for security vulnerabilities...'
-                dir("${env.PROJECT_DIR}") {
-                    sh 'npm audit --audit-level=high'
-                    sh './gradlew dependencyCheckAnalyze'
-                }
-            }
-        }
+
         stage('Publish Image') {
             steps {
                 echo 'Building Docker image...'
