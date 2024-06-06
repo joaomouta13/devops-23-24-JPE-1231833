@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_CREDENTIALS_ID = 'moutaj'  
+        DOCKER_IMAGE = 'moutaj/ca5Part2:latest'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -53,9 +58,9 @@ pipeline {
             steps {
                 echo 'Building Docker image...'
                 script {
-                    def image = docker.build("moutaj/ca5Part2:latest", "ca2/part1")
+                    def image = docker.build("${DOCKER_IMAGE}", "ca2/part1")
                     echo 'Publishing Docker image...'
-                    docker.withRegistry('https://index.docker.io/v1/', 'moutaj') {
+                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
                         image.push()
                     }
                 }
