@@ -75,6 +75,7 @@ pipeline {
                     echo 'Publishing Docker image...'
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
                         def dockerImage = docker.build(IMAGE_NAME + ":${env.BUILD_NUMBER}", './docker')
+                        bat "docker build -t ${dockerImage} ."
                         dockerImage.push()
                     }
                 }
