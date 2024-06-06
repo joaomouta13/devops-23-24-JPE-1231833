@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out the code from the repository'
+                git branch: 'main', url: 'https://github.com/joaomouta13/devops-23-24-JPE-1231833.git'
+            }
+        }
+        stage('Assemble') {
+            steps {
+                echo 'Assembling...'
+                dir('ca2/part2') {
+                    sh 'chmod +x ./gradlew'
+                    sh './gradlew clean assemble'
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                dir('ca2/part2') {
+                    sh './gradlew test'
+                    junit 'build/test-results/test/*.xml'
+                }
+            }
+        }
+        stage('Javadoc') {
+            steps {
+                echo 'Generating Javadocs...'
+                dir('ca2/part2') {
+                    sh './gradlew javadoc'
+                    publishHTML(target: [
+                        reportName: 'Javadoc',
+                        reportDir: 'build/docs/javadoc',
+                        reportFiles: 'index.html',
+                        alwaysLinkToLastBuild: true,
+                        keepAll: true
+                    ])
+                }
+            }
+        }
+        stage('Archive') {
+            steps {
+                echo 'Archiving...'
+                dir('ca2/part1') {
+                    archiveArtifacts 'build/libs/*.jar'
+                }
+            }
+        }
+        stage('Publish Image') {
+            steps {
+                echo 'Building Docker image...'
+                script {
+                    def image = docker.build("moutaj/ca5Part2:latest", "ca2/part1")
+                    echo 'Publishing Docker image...'
+                    docker.withRegistry('https://index.docker.io/v1/', 'moutaj') {
+                        image.push()
+                    }
+                }
+            }
+        }
+    }
+}
