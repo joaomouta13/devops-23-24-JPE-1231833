@@ -11,13 +11,29 @@ pipeline {
         nodejs "NodeJs"
     }
 
+    agent {
+        docker {
+            image 'docker:19.03.13'
+            args '--privileged'
+            reuseNode true
+        }
+    }
+
     stages {
+        stage('Install Docker') {
+            steps {
+                sh 'apk add --no-cache docker'
+                sh 'docker --version'
+            }
+        }
+
         stage('Checkout') {
             steps {
                 echo 'Checking out the code from the repository'
                 git branch: 'main', url: 'https://github.com/joaomouta13/devops-23-24-JPE-1231833.git'
             }
         }
+
         stage('Assemble') {
             steps {
                 echo 'Assembling...'
@@ -27,6 +43,7 @@ pipeline {
                 }
             }
         }
+
         stage('Test') {
             steps {
                 echo 'Testing...'
@@ -36,6 +53,7 @@ pipeline {
                 }
             }
         }
+
         stage('Javadoc') {
             steps {
                 echo 'Generating Javadocs...'
@@ -51,6 +69,7 @@ pipeline {
                 }
             }
         }
+
         stage('Archive') {
             steps {
                 echo 'Archiving...'
@@ -61,13 +80,6 @@ pipeline {
         }
 
         stage('Publish Image') {
-            agent {
-                docker {
-                    image 'docker:19.03.13'
-                    args '--privileged'
-                    reuseNode true
-                }
-            }
             steps {
                 echo 'Building Docker image...'
                 script {
