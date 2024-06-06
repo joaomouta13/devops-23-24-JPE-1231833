@@ -3,7 +3,7 @@ pipeline {
 
      tools {
             // Use the Docker installation named 'docker'
-            docker 'docker'
+            dockerTool 'docker'
         }
 
     environment {
@@ -79,9 +79,9 @@ pipeline {
                 script {
                     echo 'Publishing Docker image...'
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
-                        def dockerImage = docker.build(IMAGE_NAME + ":${env.BUILD_NUMBER}", './docker')
-                        bat "docker build -t ${dockerImage} ."
-                        dockerImage.push()
+                                            // Building Docker image and pushing it to Docker Hub
+                                            def dockerImage = docker.build(IMAGE_NAME + ":${env.BUILD_NUMBER}", './docker')
+                                            dockerImage.push()
                     }
                 }
             }
