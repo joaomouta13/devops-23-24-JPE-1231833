@@ -25,11 +25,15 @@ pipeline {
                 dir('ca2/part2') {
                     script {
                         // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
-                        if (isUnix()) {
-                            sh 'chmod +x ./gradlew'
-                            sh './gradlew clean assemble -x test'
+                        if (fileExists('./gradlew')) {
+                            if (isUnix()) {
+                                sh 'chmod +x ./gradlew'
+                                sh './gradlew clean assemble -x test'
+                            } else {
+                                bat 'gradlew.bat clean assemble -x test'
+                            }
                         } else {
-                            bat 'gradlew.bat clean assemble -x test'
+                            error 'Gradle Wrapper not found!'
                         }
                     }
                 }
@@ -47,11 +51,14 @@ pipeline {
                 echo 'Testing...'
                 dir('ca2/part2') {
                     script {
-                        // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
-                        if (isUnix()) {
-                            sh './gradlew test'
+                        if (fileExists('./gradlew')) {
+                            if (isUnix()) {
+                                sh './gradlew test'
+                            } else {
+                                bat 'gradlew.bat test'
+                            }
                         } else {
-                            bat 'gradlew.bat test'
+                            error 'Gradle Wrapper not found!'
                         }
                     }
                 }
@@ -69,11 +76,14 @@ pipeline {
                 echo 'Generating Javadoc...'
                 dir('ca2/part2') {
                     script {
-                        // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
-                        if (isUnix()) {
-                            sh './gradlew javadoc'
+                        if (fileExists('./gradlew')) {
+                            if (isUnix()) {
+                                sh './gradlew javadoc'
+                            } else {
+                                bat 'gradlew.bat javadoc'
+                            }
                         } else {
-                            bat 'gradlew.bat javadoc'
+                            error 'Gradle Wrapper not found!'
                         }
                     }
                 }
@@ -86,7 +96,7 @@ pipeline {
                         allowMissing: false,
                         alwaysLinkToLastBuild: true,
                         keepAll: true,
-                        reportDir: 'build/docs/javadoc',
+                        reportDir: 'ca2/part2/build/docs/javadoc',
                         reportFiles: 'index.html',
                         reportName: 'Javadoc Report'
                     ]
