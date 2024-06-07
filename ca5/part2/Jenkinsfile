@@ -19,7 +19,7 @@ pipeline {
         stage('Assemble') {
             steps {
                          echo 'Assembling...'
-                dir('ca2/part2/part2') {
+                dir('ca2/part2') {
                     script {
                         // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
                         if (isUnix()) {
@@ -43,7 +43,7 @@ pipeline {
             steps {
 
                 echo 'Testing...'
-                dir('ca2/part2/part2') {
+                dir('ca2/part2') {
                     script {
                         // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
                         if (isUnix()) {
@@ -107,7 +107,7 @@ pipeline {
 
                 echo 'Publishing Docker image...'
                 script {
-                def dockerImage = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}", '--progress=plain ca2/part2/part2')
+                def dockerImage = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}", '--progress=plain ca2/part2')
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
 
                         dockerImage.push()
