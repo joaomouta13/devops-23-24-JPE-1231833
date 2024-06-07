@@ -1,16 +1,11 @@
 pipeline {
     agent any
 
-    tools {
-        // Use the Docker installation named 'docker'
-        dockerTool 'docker'
-    }
-
     environment {
         // Define Docker Hub credentials ID as configured in Jenkins credentials
         DOCKERHUB_CREDENTIALS = 'moutaj'
         // Define the Docker image name
-        IMAGE_NAME = "image-with-jenkins"
+        IMAGE_NAME = "moutaj/img-generated-with-jenkins"
     }
 
     stages {
@@ -23,10 +18,17 @@ pipeline {
 
         stage('Assemble') {
             steps {
-                echo 'Assembling...'
-                dir('ca2/part2') {
-                    sh 'chmod +x ./gradlew'
-                    sh './gradlew clean assemble -x test'
+                         echo 'Assembling...'
+                dir('ca2/part2/part2') {
+                    script {
+                        // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
+                        if (isUnix()) {
+                            sh 'chmod +x ./gradlew'
+                            sh './gradlew clean assemble -x test'
+                        } else {
+                            bat 'gradlew.bat clean assemble -x test'
+                        }
+                    }
                 }
             }
             post {
@@ -39,19 +41,43 @@ pipeline {
 
         stage('Test') {
             steps {
+
                 echo 'Testing...'
-                dir('ca2/part2') {
-                    sh './gradlew test'
+                dir('ca2/part2/part2') {
+                    script {
+                        // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
+                        if (isUnix()) {
+                            sh './gradlew test'
+                        } else {
+                            bat 'gradlew.bat test'
+                        }
+                    }
+                    // Publish JUnit test results
                     junit '**/build/test-results/test/*.xml'
+                }
+            }
+            post {
+                always {
+                    // Archive the JUnit test results
+                    junit '**/build/test-results/test/TEST-*.xml'
                 }
             }
         }
 
         stage('Javadoc') {
             steps {
+
                 echo 'Generating Javadoc...'
-                dir('ca2/part2') {
-                    sh './gradlew javadoc'
+                dir('ca2/part2/part2') {
+                    script {
+                        // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
+                        if (isUnix()) {
+                            sh './gradlew javadoc'
+                        } else {
+                            bat 'gradlew.bat javadoc'
+                        }
+                    }
+                    // Archive and publish Javadoc
                     archiveArtifacts artifacts: '**/build/docs/javadoc/**', allowEmptyArchive: true
                     publishHTML target: [
                         allowMissing: false,
@@ -67,8 +93,10 @@ pipeline {
 
         stage('Archive') {
             steps {
+
                 echo 'Archiving...'
                 dir('ca2/part2') {
+                    // Archive build artifacts
                     archiveArtifacts artifacts: '**/build/libs/*.jar', allowEmptyArchive: true
                 }
             }
@@ -76,15 +104,22 @@ pipeline {
 
         stage('Publish Image') {
             steps {
+
+                echo 'Publishing Docker image...'
                 script {
-                    echo 'Publishing Docker image...'
+                def dockerImage = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}", '--progress=plain ca2/part2/part2')
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
-                        // Building Docker image and pushing it to Docker Hub
-                        def dockerImage = docker.build(IMAGE_NAME + ":${env.BUILD_NUMBER}", './ca2/part2')
+
                         dockerImage.push()
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
         }
     }
 }
