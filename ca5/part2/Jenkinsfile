@@ -68,7 +68,7 @@ pipeline {
             steps {
 
                 echo 'Generating Javadoc...'
-                dir('ca2/part2/part2') {
+                dir('ca2/part2') {
                     script {
                         // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
                         if (isUnix()) {
