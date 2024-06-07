@@ -6,6 +6,9 @@ pipeline {
         DOCKERHUB_CREDENTIALS = 'moutaj'
         // Define the Docker image name
         IMAGE_NAME = "moutaj/img-generated-with-jenkins"
+        // Define JAVA_HOME for the pipeline
+        JAVA_HOME = 'C:\\Program Files\\Java\\jdk-21'
+        PATH = "${JAVA_HOME}\\bin;${env.PATH}"
     }
 
     stages {
@@ -18,7 +21,7 @@ pipeline {
 
         stage('Assemble') {
             steps {
-                         echo 'Assembling...'
+                echo 'Assembling...'
                 dir('ca2/part2') {
                     script {
                         // Ensure the Gradle Wrapper is executable (Unix) or available (Windows)
@@ -41,7 +44,6 @@ pipeline {
 
         stage('Test') {
             steps {
-
                 echo 'Testing...'
                 dir('ca2/part2') {
                     script {
@@ -52,8 +54,6 @@ pipeline {
                             bat 'gradlew.bat test'
                         }
                     }
-                    // Publish JUnit test results
-                    junit '**/build/test-results/test/*.xml'
                 }
             }
             post {
@@ -66,7 +66,6 @@ pipeline {
 
         stage('Javadoc') {
             steps {
-
                 echo 'Generating Javadoc...'
                 dir('ca2/part2') {
                     script {
@@ -77,6 +76,10 @@ pipeline {
                             bat 'gradlew.bat javadoc'
                         }
                     }
+                }
+            }
+            post {
+                success {
                     // Archive and publish Javadoc
                     archiveArtifacts artifacts: '**/build/docs/javadoc/**', allowEmptyArchive: true
                     publishHTML target: [
@@ -93,7 +96,6 @@ pipeline {
 
         stage('Archive') {
             steps {
-
                 echo 'Archiving...'
                 dir('ca2/part2') {
                     // Archive build artifacts
@@ -104,13 +106,12 @@ pipeline {
 
         stage('Publish Image') {
             steps {
-
                 echo 'Publishing Docker image...'
                 script {
-                def dockerImage = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}", '--progress=plain ca2/part2')
+                    def dockerImage = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}", '--progress=plain ca2/part2')
                     docker.withRegistry('https://registry.hub.docker.com', DOCKERHUB_CREDENTIALS) {
-
                         dockerImage.push()
+                        dockerImage.push('latest')
                     }
                 }
             }
